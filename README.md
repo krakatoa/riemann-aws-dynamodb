@@ -1,2 +1,4 @@
-# riemann-aws-dynamodb
-Riemann agent to fetch AWS DynamoDB metrics
+Riemann Aws DynamoDB
+====================
+
+Riemann Aws DynamoDB agent.
