@@ -16,11 +16,16 @@ class Riemann::Tools::AwsDynamoDB
   # opt :metric, "Metric names with comma-separated warning/critical thresholds (eg., 'CPUUtilization,50,90'). Multiple tuples can be set.", :type => String, :multi => true
 
   def initialize
-    abort "FATAL: specify table names, see --help for usage" unless opts[:tables]
+    abort "FATAL: specify table names, see --help for usage" unless opts[:tables_given]
     @tables = opts.fetch(:tables)
-    @cloudwatch = Fog::AWS::CloudWatch.new(:aws_access_key_id => opts[:access_key],
-                                           :aws_secret_access_key => opts[:secret_key],
-                                           :region => opts[:region])
+    if opts.has_key?('access_key') and opts.has_key?('secret_key')
+      creds = { :aws_access_key_id     => opts[:access_key],
+                :aws_secret_access_key => opts[:secret_key] }
+    else
+      creds = { :use_iam_profile => true }
+    end
+    creds['region'] = opts[:region]
+    @cloudwatch = Fog::AWS::CloudWatch.new(creds)
   end
 
   def metrics_opts
